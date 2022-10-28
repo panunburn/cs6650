@@ -13,7 +13,7 @@ public class ClientApp {
 
     public static void main(String[] args) throws IllegalArgumentException, IOException {
         if (args.length != 2) {
-            System.out.println("Usage: java client.ClientApp localhost");
+            System.out.println("Usage: java client.ClientApp localhost 1234");
         }
         //java.util.logging.SimpleFormatter.format=%1$tb %1$td, %1$tY %1$tl:%1$tM:%1$tS.%1$tL %1$Tp %2$s%n%4$s: %5$s%n
         String ip = args[0];

@@ -1,5 +1,6 @@
 import java.rmi.RemoteException;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
 
 public class ManipulateDataImpl
         extends java.rmi.server.UnicastRemoteObject
@@ -7,6 +8,8 @@ public class ManipulateDataImpl
 
     private KeyValue store;
     private static Semaphore semaphore = new Semaphore(1);
+
+    private static Logger logger = Logger.getLogger(ServerAppRMI.class.getName());
     protected ManipulateDataImpl() throws RemoteException {
         super();
         if (store == null) {

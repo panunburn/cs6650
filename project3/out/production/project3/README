@@ -1,0 +1,20 @@
+#CS6650 Project 2
+Weiran Guo
+
+##How to build
+Sample Usage:
+javac *.java
+java ServerAppRMI 1234
+java ClientAppRMI localhost 1234
+
+you can run as many clients as you want, but you need to first run the server.
+
+for put/get/delete, simply enter following in the textbox:
+put one 1
+get one
+delete one
+
+The multithread version without RMI can be run by the same arguments without RMI.
+e.g.
+java ServerApp 1234
+java ClientApp localhost 1234

@@ -6,7 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.util.logging.Logger;
 
 public class ServerAppRMI {
-    private static Logger logger = Logger.getLogger(ServerApp.class.getName());
+    private static Logger logger = Logger.getLogger(ServerAppRMI.class.getName());
 
     public static void main(String[] args) throws IOException, IllegalArgumentException {
         logger.info("Server starts");

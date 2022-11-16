@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class ClientAppRMI {
     //private static Client client;
     private static ManipulateData m;
-    private static Logger logger = Logger.getLogger(ClientApp.class.getName());
+    private static Logger logger = Logger.getLogger(ClientAppRMI.class.getName());
 
     public static void main(String[] args) throws IllegalArgumentException, IOException {
         if (args.length != 2) {
@@ -44,7 +44,7 @@ public class ClientAppRMI {
         String reply = "";
         if (splited[0].equalsIgnoreCase("put")){
             if (splited.length != 3) {
-                logger.info("Illegal put request, usage: put one 1");
+                //logger.info("Illegal put request, usage: put one 1");
                 reply = "Illegal put request, usage: put one 1";
             }
             else {
@@ -54,28 +54,33 @@ public class ClientAppRMI {
         }
         else if (splited[0].equalsIgnoreCase("get")){
             if (splited.length != 2) {
-                logger.info("Illegal get request, usage: get one");
+                //logger.info("Illegal get request, usage: get one");
                 reply = "Illegal get request, usage: get one";
             }
             else {
                 reply = m.get(splited[1]);
-                logger.info("Send reply to client:\n" + reply);
+                //logger.info("Send reply to client:\n" + reply);
             }
         }
         else if (splited[0].equalsIgnoreCase("delete")){
             if (splited.length != 2) {
-                logger.info("Illegal delete request, usage: delete one");
+                //logger.info("Illegal delete request, usage: delete one");
                 reply = "Illegal delete request, usage: delete one";
             }
             else {
-                m.delete(splited[1]);
-                reply = "Delete performed!";
-                logger.info("Send reply to client:\n" + reply);
+                String ret = m.delete(splited[1]);
+                if (ret != null) {
+                    reply = "Delete performed!";
+                }
+                else {
+                    reply = "Delete failed, no such key.";
+                }
+                //logger.info("Send reply to client:\n" + reply);
             }
         }
         else {
             reply = "Illegal message sent from client, use put, get or delete.";
-            logger.info(reply);
+            //logger.info(reply);
         }
 
         //System.out.println("Return: " + reply);

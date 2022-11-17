@@ -94,13 +94,29 @@ public class ClientAppRMI {
                 reply = "Illegal delete request, usage: delete one";
             }
             else {
-                String ret = m.commit(Action.DELETE, splited[1], null);
-                if (ret != null) {
+                try {
+                    String ret = CompletableFuture.supplyAsync(() -> {
+                                try {
+                                    return m.commit(Action.DELETE, splited[1], null);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                } catch (RemoteException e) {
+                                    throw new RuntimeException(e);
+                                } catch (MalformedURLException e) {
+                                    throw new RuntimeException(e);
+                                } catch (NotBoundException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            })
+                            .get(1, TimeUnit.SECONDS);
                     reply = "Delete performed!";
+                } catch (TimeoutException e) {
+                    //System.out.println("Time out has occurred");
+                    reply = "Time out!";
+                } catch (InterruptedException | ExecutionException e) {
+                    // Handle
                 }
-                else {
-                    reply = "Delete failed, no such key.";
-                }
+
                 //logger.info("Send reply to client:\n" + reply);
             }
         }

@@ -1,10 +1,13 @@
 
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Scanner;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class ClientAppRMI {
@@ -28,6 +31,7 @@ public class ClientAppRMI {
             m = (ManipulateData) Naming.lookup(
                     "rmi://" + ip + ":" + port + "/StoreService");
             logger.info("Using RMI connected to ip: " + ip + " port: " + port);
+
             run();
         }
         catch (Exception e){
@@ -35,7 +39,7 @@ public class ClientAppRMI {
         }
     }
 
-    public static String processRequest(String request) throws IOException, InterruptedException {
+    public static String processRequest(String request) throws IOException, InterruptedException, NotBoundException {
         //logger.info("Acquiring lock...");
         //semaphore.acquire();
         //logger.info("Got permit!");
@@ -48,8 +52,30 @@ public class ClientAppRMI {
                 reply = "Illegal put request, usage: put one 1";
             }
             else {
-                m.put(splited[1], splited[2]);
-                reply = "put performed";
+                try {
+                    String s = CompletableFuture.supplyAsync(() -> {
+                                try {
+                                    return m.commit(Action.PUT, splited[1], splited[2]);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                } catch (RemoteException e) {
+                                    throw new RuntimeException(e);
+                                } catch (MalformedURLException e) {
+                                    throw new RuntimeException(e);
+                                } catch (NotBoundException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            })
+                            .get(1, TimeUnit.SECONDS);
+                    reply = "Put performed!";
+                } catch (TimeoutException e) {
+                    //System.out.println("Time out has occurred");
+                    reply = "Time out!";
+                } catch (InterruptedException | ExecutionException e) {
+                    // Handle
+                }
+
+
             }
         }
         else if (splited[0].equalsIgnoreCase("get")){
@@ -68,7 +94,7 @@ public class ClientAppRMI {
                 reply = "Illegal delete request, usage: delete one";
             }
             else {
-                String ret = m.delete(splited[1]);
+                String ret = m.commit(Action.DELETE, splited[1], null);
                 if (ret != null) {
                     reply = "Delete performed!";
                 }
@@ -76,6 +102,19 @@ public class ClientAppRMI {
                     reply = "Delete failed, no such key.";
                 }
                 //logger.info("Send reply to client:\n" + reply);
+            }
+        }
+        else if (splited[0].equalsIgnoreCase("switch")) {
+            if (splited.length != 3) {
+                //logger.info("Illegal delete request, usage: delete one");
+                reply = "Illegal switch request, usage: switch localhost 1235";
+            }
+            else {
+                m = (ManipulateData) Naming.lookup(
+                        "rmi://" + splited[1] + ":" + splited[2] + "/StoreService");
+                logger.info("Reconnecting to server ip: " + splited[1] + " port: " + splited[2]);
+                //logger.info("Send reply to client:\n" + reply);
+                reply = "Reconnect success!";
             }
         }
         else {
@@ -86,10 +125,10 @@ public class ClientAppRMI {
         //System.out.println("Return: " + reply);
         //semaphore.release();
         //logger.info("Lock released!");
-        return reply + "\n";
+        return reply;
     }
 
-    private static void run() throws IOException, InterruptedException {
+    private static void run() throws IOException, InterruptedException, NotBoundException {
         //System.out.println("123");
         Scanner sc = new Scanner(System.in);
         while (true) {
@@ -98,7 +137,8 @@ public class ClientAppRMI {
                 logger.info("User enter exit");
                 break;
             }
-            logger.info("Reply from server!\n" + processRequest(message) + "\n");
+            String ret = processRequest(message);
+            logger.info("Reply from server!\n" +  ret+ "\n");
 
             //logger.info("Send message to server!\n" + message);
             //client.send(message);

@@ -4,16 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/*
+ * A proposer will send prepare and accept messages.
+ */
 public class Proposer {
     private ArrayList<Client> servers;
     private static Logger logger = Logger.getLogger(Proposer.class.getName());
     private int myport, startport, endport;
+
+    /**
+     * The constructor.
+     * @param myPort the port of this server.
+     * @param startPort the port of start server.
+     * @param endPort the port of end server.
+     * @throws IOException throws exception when IO fails.
+     */
     public Proposer(int myPort, int startPort, int endPort) throws IOException {
         this.myport = myPort;
         this.startport = startPort;
         this.endport = endPort;
     }
 
+    /**
+     * Init the servers first time, connect to all other servers.
+     */
     public void init() {
         servers = new ArrayList<Client>();
         for (int i = startport; i <= endport; i++) {
@@ -33,6 +47,11 @@ public class Proposer {
         }
     }
 
+    /**
+     * Send prepare message to all acceptors.
+     * @param timestamp the timestamp of current server.
+     * @throws IOException throws exception when IO fails.
+     */
     public boolean prepare(int timestamp) throws IOException {
         boolean ret = false;
         if (servers == null) {
@@ -66,6 +85,12 @@ public class Proposer {
         return ret;
     }
 
+    /**
+     * Send accept message to all the servers.
+     * @param timestamp the timestamp of current command.
+     * @param command the current command that want to be accepted.
+     * @throws IOException throws exception when IO fails.
+     */
     public boolean accept(int timestamp, List<String> command) throws IOException {
         boolean ret = false;
         if (servers == null) {

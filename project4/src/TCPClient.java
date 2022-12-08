@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/*
+ * A tcp client can connect to a server and send messages, can be used by anyone including a server.
+ */
 public class TCPClient extends AbstractClient {
     private Socket socket;
     private PrintWriter out;

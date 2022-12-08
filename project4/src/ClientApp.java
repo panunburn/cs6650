@@ -5,6 +5,9 @@ import java.net.SocketTimeoutException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+/*
+ * A clientApp, enable user to start a client and connect to servers.
+ */
 public class ClientApp {
     private static Client client;
     private static boolean tcp;
@@ -31,6 +34,10 @@ public class ClientApp {
         run();
     }
 
+    /**
+     * Do the IO commands and interacting with users.
+     * @throws IOException throws exception when inputs wrong.
+     */
     private static void run() throws IOException {
         //System.out.println("123");
         Scanner sc = new Scanner(System.in);

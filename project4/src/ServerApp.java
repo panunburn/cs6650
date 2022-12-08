@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/*
+ * A serverApp, enable user to start a server, can be connected by clients.
+ */
 public class ServerApp {
     private static Logger logger = Logger.getLogger(ServerApp.class.getName());
     //private static ArrayList<Client> servers;

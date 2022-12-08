@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/*
+ * A TCPHandler will run concurrently, as it will handle all messages sent by others.
+ * Messages can be sent by client, or proposer server.
+ */
 public class TCPHandler extends Thread {
 
     //private ServerSocket server;
@@ -19,6 +23,13 @@ public class TCPHandler extends Thread {
 
     private Paxos paxos;
 
+    /**
+     * The constructor will initialize all the values.
+     * @param socket the socket of incoming clients.
+     * @param store the shared kv store.
+     * @param paxos the paxos that is running proposer.
+     * @param commands the shared commands that can be checked by propser.
+     */
     public TCPHandler(Socket socket, KeyValue store, Paxos paxos, List<List<String>> commands) {
         this.socket = socket;
         this.store = store;
@@ -26,6 +37,10 @@ public class TCPHandler extends Thread {
         this.commands = commands;
     }
 
+    /**
+     * The runing starts, so it will keep listening to all the requests messages from
+     * either clients or servers.
+     */
     public void run() {
         try {
             new Thread(paxos).start();
@@ -55,16 +70,30 @@ public class TCPHandler extends Thread {
     }
 
 
+    /**
+     * Try to receive message from client.
+     */
     public String receive() throws IOException{
         String message = br.readLine();
         return message;
     }
 
+    /**
+     * Sen message to client.
+     */
     public void send(String message) throws IOException{
         bw.write(message);
         bw.flush();
     }
 
+    /**
+     * The received message will be processed here.
+     * It can be client request such as data manipulation,
+     * or it can be server request that ask for a prepare,
+     * accept to command.
+     * @param request the received request from socket.
+     * @throws IOException throws exception when IO fails.
+     */
     public boolean processRequest(String request) throws IOException, InterruptedException {
         boolean exit = false;
         String[] splited = request.split(" ");

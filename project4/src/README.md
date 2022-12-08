@@ -37,5 +37,10 @@ localhost 1235
 
 The operation remains same after switching the server.
 
+
+To mimic the failure of server, you can let server sleep from client side.
+e.g.
+sleep 200000
+
 One sample
 ![Alt Text](https://github.com/panunburn/cs6650/blob/main/project4/src/sample%20run.gif)

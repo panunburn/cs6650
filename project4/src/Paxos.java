@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/*
+ * Implement paxos algorithm, run on a thread so proposer can keep checking the queue.
+ */
 public class Paxos extends Thread {
     private Proposer proposer;
     private static Logger logger = Logger.getLogger(Paxos.class.getName());
@@ -14,6 +17,12 @@ public class Paxos extends Thread {
 
     private KeyValue store;
 
+    /**
+     * The constructor.
+     * @param commands the shared commands that can be accessed by proposer.
+     * @param proposer the proposer that will send prepare and accept messages.
+     * @param store the shared store.
+     */
     public Paxos(List<List<String>> commands, Proposer proposer, KeyValue store) {
         this.commands = commands;
         this.proposer = proposer;
@@ -22,6 +31,10 @@ public class Paxos extends Thread {
         accepted = 0;
     }
 
+    /**
+     * it will run the thread of paxos, so proposer will keep checking the queue
+     * and send prepare and accept messages.
+     */
     @Override
     public void run() {
         logger.info("Paxos running!");

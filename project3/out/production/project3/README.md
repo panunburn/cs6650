@@ -36,3 +36,6 @@ switch localhost 1235
 The operation remains same after switching the server.
 
 ![Alt Text](https://github.com/panunburn/cs6650/blob/main/project3/src/cmd%20sample.gif)
+![Alt Text](https://github.com/panunburn/cs6650/blob/main/project3/src/running%20sample.gif)
+![Alt Text](https://github.com/panunburn/cs6650/blob/main/project3/src/put%20and%20get%20sample.gif)
+![Alt Text](https://github.com/panunburn/cs6650/blob/main/project3/src/switch%20server.gif)

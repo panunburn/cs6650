@@ -10,9 +10,9 @@ java ServerAppRMI <port number> <start port> <end port>
 For simplicity, I assume all servers have continuous port number, for example,
 from 1234 to 1238. So to run server cluster, simply run
 
-java ServerAppRMI 1234 1234 1238
+java ServerApp 1234 1234 1238
 ...
-java ServerAppRMI 1238 1234 1238
+java ServerApp 1238 1234 1238
 
 The 1234 is the port number you want to use for this server.
 

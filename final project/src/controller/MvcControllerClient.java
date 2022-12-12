@@ -1,5 +1,6 @@
 package controller;
 
+import model.Action;
 import model.ManipulateData;
 import view.clientView;
 
@@ -7,8 +8,15 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 
 /**
@@ -79,10 +87,10 @@ public class MvcControllerClient implements ActionListener {
                     System.out.println("Delete called");
                     System.out.println(input);
                     String[] args = input.split("\\s+");
-                    ret = "Delete performed! " +processDelete(args);
+                    ret = processDelete(args);
                 }
                 else if (((JButton) actionEvent.getSource()).getActionCommand().equals("GET")) {
-                    String input = view.getDeleteSettings();
+                    String input = view.getGetSettings();
                     System.out.println("Get called");
                     System.out.println(input);
                     String[] args = input.split("\\s+");
@@ -121,7 +129,30 @@ public class MvcControllerClient implements ActionListener {
         }
         String key = args[0];
         String value = args[1];
-        return model.put(key, value);
+        String reply = "";
+        try {
+            String s = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            return model.commit(Action.PUT, args[0], args[1]);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        } catch (NotBoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .get(1, TimeUnit.SECONDS);
+            reply = "Put performed!";
+        } catch (TimeoutException e) {
+            //System.out.println("Time out has occurred");
+            reply = "Time out!";
+        } catch (InterruptedException | ExecutionException e) {
+            // Handle
+        }
+        return reply;
 
     }
 
@@ -134,7 +165,30 @@ public class MvcControllerClient implements ActionListener {
         }
         String key = args[0];
         //String value = args[1];
-        return model.delete(key);
+        String reply = "";
+        try {
+            String ret = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            return model.commit(Action.DELETE, args[0], null);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        } catch (NotBoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .get(1, TimeUnit.SECONDS);
+            reply = "Delete performed!";
+        } catch (TimeoutException e) {
+            //System.out.println("Time out has occurred");
+            reply = "Time out!";
+        } catch (InterruptedException | ExecutionException e) {
+            // Handle
+        }
+        return reply;
     }
 
     private String processGet(String[] args) throws Exception {

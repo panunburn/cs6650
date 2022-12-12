@@ -97,7 +97,7 @@ public class ClientAppRMI {
             }
             else {
                 try {
-                    String ret = CompletableFuture.supplyAsync(() -> {
+                    reply = CompletableFuture.supplyAsync(() -> {
                                 try {
                                     return m.commit(Action.DELETE, splited[1], null);
                                 } catch (InterruptedException e) {

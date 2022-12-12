@@ -175,6 +175,17 @@ public class clientView extends JFrame {
     }
 
     /**
+     * Get the dungeon setting with input box.
+     * @return a string contains dungeon setting.
+     */
+    public String getGetSettings() {
+        String command = this.input4.getText();
+        this.input4.setText("");
+        System.out.println(command);
+        return command;
+    }
+
+    /**
      * Transmit an error message to the view, in case
      * the command could not be processed correctly.
      *

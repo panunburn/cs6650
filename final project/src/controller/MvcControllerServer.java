@@ -117,7 +117,6 @@ public class MvcControllerServer implements ActionListener {
             logger.info("Using RMI connected to coordinator, ip: " + coord_ip + " port: " + coord_port);
             coordinator = (ManipulateData) Naming.lookup(
                     "rmi://" + coord_ip + ":" + coord_port + "/StoreService");
-
             coordinator.register("localhost", port);
         }
     }

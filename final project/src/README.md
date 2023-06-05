@@ -1,4 +1,5 @@
-#CS6650 Project 3
+A demon on this project: https://www.youtube.com/watch?v=VEqzCZnyD_c
+#CS6650 Final Project 
 Weiran Guo
 
 ##How to build
